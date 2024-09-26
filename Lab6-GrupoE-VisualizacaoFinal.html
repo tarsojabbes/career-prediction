@@ -3,37 +3,60 @@
 <head>
   <meta charset="utf-8">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      font: 100%/150% calibri, helvetica, sans-serif;
+    html,body,form,fieldset,table,tr,td,img {
+        margin: 0;
+        padding: 0;
+        font: 100%/150% calibri, helvetica, sans-serif;
+    }
+    td, td * { 
+        max-height: 30px !important;
     }
     #container {
-      width: 100%;
-      height: 600px;
-      padding: 20px;
+      max-width: 100%;
+      height: 470px;
+      padding: 10px 50px 10px 50px;
     }
   </style>
   <title>Correlação GPA e Interesses de Carreira</title>
 </head>
-<body style="height: 100%;">
-
+<body style="width: 100%; height: 100%; margin: 0">
+  <table style="width: 100%; margin: 0px; padding: 0px; border-width:0px;">
+    <tbody>
+        <tr height="10px">
+            <td>UNIVERSIDADE FEDERAL DE CAMPINA GRANDE - UFCG</td>
+            <td style="text-align: right;">Disciplina: Visualização de Dados (TECC)</td>
+        </tr>
+        <tr>
+            <td>CENTRO DE ENGENHARIA ELÉTRICA E INFORMÁTICA - CEEI</td>
+            <td style="text-align: right;">Professor: Maxwell Guimarães de Oliveira</td>
+        </tr>
+        <tr>
+            <td>UNIDADE ACADÊMICA DE SISTEMAS E COMPUTAÇÃO - UASC</td>
+            <td style="text-align: right;">Período: 20XX.X</td>
+        </tr>
+    </tbody>
+  </table>
+  
   <div id="header">
-    <h2 style="text-align:center;">Correlação entre GPA e Interesses de Carreira</h2>
-    <p style="text-align:center;">Visualizando as escolhas de domínios de interesse por GPA e gênero.</p>
+    <h2 style="text-align:center;">Projeto de Visualização Interativa de Dados</h2>
+    <h4 style="text-align:center;"><u>Grupo E</u>: Paola Moura, Lucas Costa, Tarso Jabbes, Eli Cordeiro, Lucas Medeiros</h4>
+    <p style="text-align:center;">&nbsp;</p>
+    <h2 style="text-align:center;"><span style="font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif;"><strong>Correlação GPA e Interesses de Carreira</strong></span></h2>
+    <p style="text-align:justify; padding: 10px 50px 10px 50px;">Esta visualização interativa permite explorar a relação entre as áreas de interesse dos estudantes de Ciência da Computação e seus respectivos GPAs, bem como a variação dessas preferências de carreira entre gêneros.</p>
   </div>
-
-  <div id="controls" style="text-align:center; margin-bottom: 20px;">
-    <label for="genderFilter">Filtrar por Gênero:</label>
-    <select id="genderFilter">
-      <option value="all">Todos</option>
-      <option value="Male">Homens</option>
-      <option value="Female">Mulheres</option>
-    </select>
-  </div>
-
+  
   <div id="container"></div>
+  
+  <div id="footer" style="height: 2%">
+    <p style="text-align:justify; padding: 20px 50px 0px 50px;"><b>Dicas para interagir com a visualização:</b></p>
+    <ul style="padding: 0px 50px 10px 75px;">
+      <li>Use o filtro de gênero para visualizar como homens e mulheres se distribuem entre as áreas de interesse.</li>
+      <li>Faça zoom em faixas de GPA específicas para observar as escolhas de carreira em diferentes níveis acadêmicos.</li>
+      <li>Passe o mouse sobre as barras para ver o número exato de estudantes em cada área de interesse.</li>
+    </ul>
+  </div>
 
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 
   <script type="text/javascript">

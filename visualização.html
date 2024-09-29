@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+  <style>
+    html,body,form,fieldset,table,tr,td,img {
+        margin: 0;
+        padding: 0;
+        font: 100%/150% calibri, helvetica, sans-serif;
+    }
+    td, td * { 
+        max-height: 30px !important;
+    }
+    #container {
+      max-width: 100%;
+      height: 470px;
+      padding: 10px 50px 10px 50px;
+    }
+  </style>
+  <title>Correlação GPA e Interesses de Carreira</title>
+</head>
+<body style="width: 100%; height: 100%; margin: 0">
+  <table style="width: 100%; margin: 0px; padding: 0px; border-width:0px;">
+    <tbody>
+        <tr height="10px">
+            <td>UNIVERSIDADE FEDERAL DE CAMPINA GRANDE - UFCG</td>
+            <td style="text-align: right;">Disciplina: Visualização de Dados (TECC)</td>
+        </tr>
+        <tr>
+            <td>CENTRO DE ENGENHARIA ELÉTRICA E INFORMÁTICA - CEEI</td>
+            <td style="text-align: right;">Professor: Maxwell Guimarães de Oliveira</td>
+        </tr>
+        <tr>
+            <td>UNIDADE ACADÊMICA DE SISTEMAS E COMPUTAÇÃO - UASC</td>
+            <td style="text-align: right;">Período: 20XX.X</td>
+        </tr>
+    </tbody>
+  </table>
+  
+  <div id="header">
+    <h2 style="text-align:center;">Projeto de Visualização Interativa de Dados</h2>
+    <h4 style="text-align:center;"><u>Grupo E</u>: Paola Moura, Lucas Costa, Tarso Jabbes, Eli Cordeiro, Lucas Medeiros</h4>
+    <p style="text-align:center;">&nbsp;</p>
+    <h2 style="text-align:center;"><span style="font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif;"><strong>Correlação GPA e Interesses de Carreira</strong></span></h2>
+    <p style="text-align:justify; padding: 10px 50px 10px 50px;">Esta visualização interativa permite explorar a relação entre as áreas de interesse dos estudantes de Ciência da Computação e seus respectivos GPAs, bem como a variação dessas preferências de carreira entre gêneros.</p>
+  </div>
+
+  <!-- Adiciona o filtro de seleção de gênero -->
+  <div style="text-align: center; padding: 20px;">
+    <label for="genderFilter">Selecione o gênero:</label>
+    <select id="genderFilter">
+      <option value="all">Todos</option>
+      <option value="male">Masculino</option>
+      <option value="female">Feminino</option>
+    </select>
+  </div>
+  
+  <div id="container"></div>
+  
+  <div id="footer" style="height: 2%">
+    <p style="text-align:justify; padding: 20px 50px 0px 50px;"><b>Dicas para interagir com a visualização:</b></p>
+    <ul style="padding: 0px 50px 10px 75px;">
+      <li>Use o filtro de gênero para visualizar como homens e mulheres se distribuem entre as áreas de interesse.</li>
+      <li>Faça zoom em faixas de GPA específicas para observar as escolhas de carreira em diferentes níveis acadêmicos.</li>
+      <li>Passe o mouse sobre as barras para ver o número exato de estudantes em cada área de interesse.</li>
+    </ul>
+  </div>
+
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+  <script type="text/javascript">
+    var data = {
+      GPA: [3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9],
+      all: {
+        "Artificial Intelligence": [3, 2, 3, 5, 4, 3, 5, 6],
+        "Cybersecurity": [1, 2, 1, 3, 3, 4, 3, 4],
+        "Data Science": [2, 1, 2, 2, 3, 3, 2, 3],
+        "Software Development": [1, 1, 2, 3, 2, 4, 4, 5],
+        "Web Development": [2, 3, 2, 2, 2, 3, 3, 4],
+        "Machine Learning": [3, 2, 3, 4, 3, 5, 4, 5],
+        "Cloud Computing": [1, 1, 2, 2, 3, 3, 3, 3]
+      },
+      male: {
+        "Artificial Intelligence": [2, 1, 2, 3, 2, 2, 4, 5],
+        "Cybersecurity": [1, 2, 1, 2, 3, 3, 2, 3],
+        "Data Science": [1, 1, 2, 2, 2, 2, 2, 2],
+        "Software Development": [1, 1, 2, 2, 2, 3, 3, 4],
+        "Web Development": [2, 2, 1, 2, 1, 2, 2, 3],
+        "Machine Learning": [2, 1, 2, 3, 2, 4, 3, 4],
+        "Cloud Computing": [1, 1, 2, 2, 2, 3, 2, 2]
+      },
+      female: {
+        "Artificial Intelligence": [1, 1, 1, 2, 2, 1, 1, 1],
+        "Cybersecurity": [0, 0, 0, 1, 0, 1, 1, 1],
+        "Data Science": [1, 0, 0, 0, 1, 1, 0, 1],
+        "Software Development": [0, 0, 0, 1, 0, 1, 1, 1],
+        "Web Development": [0, 1, 1, 0, 1, 1, 1, 1],
+        "Machine Learning": [1, 1, 1, 1, 1, 1, 1, 1],
+        "Cloud Computing": [0, 0, 0, 0, 1, 0, 1, 1]
+      }
+    };
+
+    var chartDom = document.getElementById('container');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    function getOption(gender) {
+      var genderData = data[gender] || data.all;
+
+      return {
+        title: {
+          text: 'Correlação entre GPA e Interesses de Carreira',
+          
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {
+          data: Object.keys(genderData)
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: { show: true }
+          }
+        },
+        xAxis: {
+          type: 'category',
+          data: data.GPA,
+          name: 'GPA'
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Número de Estudantes'
+        },
+        dataZoom: [{
+          type: 'slider',
+          start: 0,
+          end: 100
+        }],
+        series: Object.keys(genderData).map(function (domain) {
+          return {
+            name: domain,
+            type: 'bar',
+            stack: 'total',
+            data: genderData[domain]
+          };
+        })
+      };
+    }
+
+    myChart.setOption(getOption('all'));
+
+    // Listener para alterar o gênero
+    document.getElementById('genderFilter').addEventListener('change', function () {
+      var selectedGender = this.value;
+      myChart.setOption(getOption(selectedGender));
+    });
+
+  </script>
+
+</body>
+</html>

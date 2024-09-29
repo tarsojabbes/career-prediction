@@ -44,16 +44,6 @@
     <h2 style="text-align:center;"><span style="font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif;"><strong>Correlação GPA e Interesses de Carreira</strong></span></h2>
     <p style="text-align:justify; padding: 10px 50px 10px 50px;">Esta visualização interativa permite explorar a relação entre as áreas de interesse dos estudantes de Ciência da Computação e seus respectivos GPAs, bem como a variação dessas preferências de carreira entre gêneros.</p>
   </div>
-
-  <!-- Adiciona o filtro de seleção de gênero -->
-  <div style="text-align: center; padding: 20px;">
-    <label for="genderFilter">Selecione o gênero:</label>
-    <select id="genderFilter">
-      <option value="all">Todos</option>
-      <option value="male">Masculino</option>
-      <option value="female">Feminino</option>
-    </select>
-  </div>
   
   <div id="container"></div>
   
@@ -110,8 +100,7 @@
 
       return {
         title: {
-          text: 'Correlação entre GPA e Interesses de Carreira',
-          
+          text: 'Correlação entre GPA e Interesses de Carreira'
         },
         tooltip: {
           trigger: 'axis',
@@ -155,9 +144,8 @@
 
     myChart.setOption(getOption('all'));
 
-    // Listener para alterar o gênero
     document.getElementById('genderFilter').addEventListener('change', function () {
-      var selectedGender = this.value;
+      var selectedGender = this.value === 'all' ? 'all' : this.value;
       myChart.setOption(getOption(selectedGender));
     });
 

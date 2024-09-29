@@ -39,10 +39,20 @@
   
   <div id="header">
     <h2 style="text-align:center;">Projeto de Visualização Interativa de Dados</h2>
-    <h4 style="text-align:center;"><u>Grupo E</u>: Paola Moura, Lucas Costa, Tarso Jabbes, Eli Cordeiro, Lucas Medeiros</h4>
+    <h4 style="text-align:center;"><u>Grupo E</u>: Eli Silva, Lucas Santos, Lucas Soares, Paola Marques, Tarso Oliveira</h4>
     <p style="text-align:center;">&nbsp;</p>
-    <h2 style="text-align:center;"><span style="font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif;"><strong>Correlação GPA e Interesses de Carreira</strong></span></h2>
+    <h2 style="text-align:center;"><span style="font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif;"><strong>Correlação GPA (Grade Point Average) e Interesses de Carreira</strong></span></h2>
     <p style="text-align:justify; padding: 10px 50px 10px 50px;">Esta visualização interativa permite explorar a relação entre as áreas de interesse dos estudantes de Ciência da Computação e seus respectivos GPAs, bem como a variação dessas preferências de carreira entre gêneros.</p>
+  </div>
+
+  <!-- Adiciona o filtro de seleção de gênero -->
+  <div style="text-align: center; padding: 20px;">
+    <label for="genderFilter">Selecione o gênero:</label>
+    <select id="genderFilter">
+      <option value="all">Todos</option>
+      <option value="male">Masculino</option>
+      <option value="female">Feminino</option>
+    </select>
   </div>
   
   <div id="container"></div>
@@ -58,6 +68,8 @@
 
   <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
 
   <script type="text/javascript">
     var data = {
@@ -90,6 +102,7 @@
         "Cloud Computing": [0, 0, 0, 0, 1, 0, 1, 1]
       }
     };
+    
 
     var chartDom = document.getElementById('container');
     var myChart = echarts.init(chartDom);
@@ -100,7 +113,8 @@
 
       return {
         title: {
-          text: 'Correlação entre GPA e Interesses de Carreira'
+          text: 'Correlação entre GPA e Interesses de Carreira',
+          
         },
         tooltip: {
           trigger: 'axis',
@@ -144,8 +158,9 @@
 
     myChart.setOption(getOption('all'));
 
+    // Listener para alterar o gênero
     document.getElementById('genderFilter').addEventListener('change', function () {
-      var selectedGender = this.value === 'all' ? 'all' : this.value;
+      var selectedGender = this.value;
       myChart.setOption(getOption(selectedGender));
     });
 

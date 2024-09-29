@@ -356,110 +356,129 @@
                 {'Student ID': '179', 'Name': 'Sophia Johnson', 'Gender': 'Female', 'Age': '22', 'GPA': '3.5', 'Major': 'Computer Science', 'Interested Domain': 'Database Management', 'Projects': 'SQL Database Administration', 'Future Career': 'Database Administrator', 'Python': 'Weak', 'SQL': 'Strong', 'Java': 'Average'} ,
                 {'Student ID': '180', 'Name': 'Michael Brown', 'Gender': 'Male', 'Age': '23', 'GPA': '3.7', 'Major': 'Computer Science', 'Interested Domain': 'Cloud Computing', 'Projects': 'Cloud Solution Architecture', 'Future Career': 'Cloud Solutions Architect', 'Python': 'Strong', 'SQL': 'Strong', 'Java': 'Weak'}]
     
-                // Função para calcular as 6 áreas de interesse mais populares
-function getTopDomains(data, topN) {
-  let domainCounts = {};
-
-  // Contagem dos domínios de interesse
-  data.forEach(student => {
-    const domain = student['Interested Domain'];
-    domainCounts[domain] = (domainCounts[domain] || 0) + 1;
-  });
-
-  // Ordenar e pegar os top N domínios
-  return Object.keys(domainCounts)
-    .sort((a, b) => domainCounts[b] - domainCounts[a])
-    .slice(0, topN);
-}
-
-// Função para gerar a estrutura de dados para o gráfico
-function generateChartData(students, topDomains) {
-  let gpaData = {}; // GPA será o eixo X
-  students.forEach(student => {
-    const gpa = student.GPA;
-    const domain = student['Interested Domain'];
-
-    if (topDomains.includes(domain)) {
-      // Inicializar a estrutura de dados
-      if (!gpaData[gpa]) {
-        gpaData[gpa] = {};
-        topDomains.forEach(domain => {
-          gpaData[gpa][domain] = 0;
-        });
-      }
-
-      // Incrementar o domínio para o GPA
-      gpaData[gpa][domain] += 1;
+    // Função para condensar os domínios de interesse
+    function condenseDomains(domain) {
+    if (['Artificial Intelligence', 'Machine Learning', 'Computer Vision', 'Natural Language Processing', 'Data Mining'].includes(domain)) {
+        return 'Artifical Intelligence';
+    } else if (['Software Development', 'Web Development', 'Mobile App Development', 'Software Engineering', 'Game Development'].includes(domain)) {
+        return 'Software Engineering';
+    } else if (['Cybersecurity', 'Cloud Computing', 'Network Security', 'Distributed Systems'].includes(domain)) {
+        return 'Infrastructure';
+    } else if (['Bioinformatics', 'Biomedical Computing'].includes(domain)) {
+        return 'Bioinformatics';
     }
-  });
+    return domain;  // Devolve o domínio original se não precisar condensar
+    }
 
-  // Converter para o formato necessário para o ECharts
-  let gpaCategories = Object.keys(gpaData).sort();  // Sort para manter ordem
-  let seriesData = topDomains.map(domain => {
+    // Função para calcular os domínios condensados mais populares
+    function getTopDomains(data, topN) {
+    let domainCounts = {};
+
+    // Contagem dos domínios condensados de interesse
+    data.forEach(student => {
+        const condensedDomain = condenseDomains(student['Interested Domain']);
+        domainCounts[condensedDomain] = (domainCounts[condensedDomain] || 0) + 1;
+    });
+
+    // Ordenar e pegar os top N domínios
+    return Object.keys(domainCounts)
+        .sort((a, b) => domainCounts[b] - domainCounts[a])
+        .slice(0, topN);
+    }
+
+    // Função para gerar a estrutura de dados para o gráfico
+    function generateChartData(students, topDomains) {
+    let gpaData = {}; // GPA será o eixo X
+    students.forEach(student => {
+        const gpa = student.GPA;
+        const domain = condenseDomains(student['Interested Domain']);
+
+        if (topDomains.includes(domain)) {
+        // Inicializar a estrutura de dados
+        if (!gpaData[gpa]) {
+            gpaData[gpa] = {};
+            topDomains.forEach(domain => {
+            gpaData[gpa][domain] = 0;
+            });
+        }
+
+        // Incrementar o domínio para o GPA
+        gpaData[gpa][domain] += 1;
+        }
+    });
+
+    // Converter para o formato necessário para o ECharts
+    let gpaCategories = Object.keys(gpaData).sort();  // Sort para manter ordem
+    let seriesData = topDomains.map(domain => {
+        return {
+        name: domain,
+        type: 'bar',
+        stack: 'total',
+        data: gpaCategories.map(gpa => gpaData[gpa][domain])
+        };
+    });
+
     return {
-      name: domain,
-      type: 'bar',
-      stack: 'total',
-      data: gpaCategories.map(gpa => gpaData[gpa][domain])
+        gpaCategories: gpaCategories,
+        seriesData: seriesData
     };
-  });
+    }
 
-  return {
-    gpaCategories: gpaCategories,
-    seriesData: seriesData
-  };
-}
+    // Pegar os 6 domínios de interesse condensados mais populares
+    var topDomains = getTopDomains(data, 5);
 
-// Pegar os 6 domínios de interesse mais populares
-var topDomains = getTopDomains(data, 6);
+    console.log(topDomains)
 
-console.log(topDomains)
+    // Gerar dados do gráfico
+    var chartData = generateChartData(data, topDomains);
 
-// Gerar dados do gráfico
-var chartData = generateChartData(data, topDomains);
-console.log(chartData)
+    console.log(chartData)
 
     var chartDom = document.getElementById('container');
     var myChart = echarts.init(chartDom);
     var option = {
-            title: {
-                text: 'Correlação entre GPA e Domínios de Interesse (Top 6)',
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                type: 'shadow'
-                }
-            },
-            legend: {
-                data: topDomains
-            },
-            toolbox: {
-                show: true,
-                feature: {
-                saveAsImage: { show: true }
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: chartData.gpaCategories,  // Eixo X (GPA)
-                name: 'GPA'
-            },
-            yAxis: {
-                type: 'value',
-                name: 'Número de Estudantes'
-            },
-            dataZoom: [
-                {
-                type: 'slider',
-                start: 0,
-                end: 100
-                }
-            ],
-            series: chartData.seriesData  // Dados empilhados por domínio de interesse
-            };
+    title: {
+        text: 'Correlação entre GPA e Domínios de Interesse',
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+        type: 'shadow'
+        }
+    },
+    legend: {
+        orient: 'vertical',
+        right: 10,   // Posição da legenda no lado direito
+        top: 'center',
+        data: topDomains
+    },
+    toolbox: {
+        show: true,
+        feature: {
+        saveAsImage: { show: true }
+        }
+    },
+    xAxis: {
+        type: 'category',
+        data: chartData.gpaCategories,  // Eixo X (GPA)
+        name: 'GPA'
+    },
+    yAxis: {
+        type: 'value',
+        name: 'Número de Estudantes'
+    },
+    dataZoom: [
+        {
+        type: 'slider',
+        start: 0,
+        end: 100
+        }
+    ],
+    series: chartData.seriesData  // Dados empilhados por domínio de interesse
+    };
 
     myChart.setOption(option);
+
 
     /* // Listener para alterar o gênero
     document.getElementById('genderFilter').addEventListener('change', function () {
